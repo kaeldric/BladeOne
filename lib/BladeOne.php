@@ -770,7 +770,13 @@ class BladeOne
             $this->showError('runString', $lastError['message'] . ' ' . $lastError['type'], true);
             return '';
         }
-        return $this->postRun(\ob_get_clean());
+        $result = \ob_get_clean();
+        if ($result && $this->optimize) {
+            // removes space and tabs and replaces by a single space
+            $result = \preg_replace('/^ {2,}/m', ' ', $result);
+            $result = \preg_replace('/^\t{2,}/m', ' ', $result);
+        }
+        return $this->postRun($result);
     }
 
     /**
